@@ -44,7 +44,7 @@ class MemorySimulator:
 		self.translatedNum += 1
 		frame = None
       
-		frameNum = self.TLB.getFrame(pageNum)
+		frameNum = self.TLB.getFrameNum(pageNum)
 		if frameNum == None:
 			self.TLBMisses += 1
 			frameNum, frame = self.checkPageTable(pageNum)
@@ -52,7 +52,7 @@ class MemorySimulator:
 			self.TLBHits += 1
 		
 		if frame == None:
-			frame = self.physicalMemory.memory[frameNum]
+			frame = self.physicalMemory.getFrame(frameNum)
 
 		self.printRequest(address, frame[offset], frameNum, frame)
 	
@@ -105,14 +105,21 @@ class LRUMemory:
 			self.memory[temp][i] = frame[i]
 
 		return temp
+	
+	def getFrame(self, frameNum):
+		self.frameQueue.remove(frameNum)
+		self.frameQueue.append(frameNum)
+		return self.memory[frameNum]
 
 class LRUTLB:
 	def __init__(self):
 		self.table = {}
 		self.numQueue = []
 
-	def getFrame(self, page):
+	def getFrameNum(self, page):
 		if page in self.numQueue:
+			self.numQueue.remove(page)
+			self.numQueue.append(page)
 			return self.table[page]
 		return None
 
@@ -133,7 +140,6 @@ class LRUTLB:
 		self.numQueue.append(page)
 		self.table[page] = frame
 
-
 class FIFOMemory:
 	def __init__(self, frames):
 		self.memory = [[0] * PAGE_SIZE] * frames
@@ -149,13 +155,16 @@ class FIFOMemory:
 
 		self.frameNum = temp + 1
 		return temp
+	
+	def getFrame(self, frameNum):
+		return self.memory[frameNum]
 
 class FIFOTLB:
 	def __init__(self):
 		self.numQueue = []
 		self.table = {}
 
-	def getFrame(self, page):
+	def getFrameNum(self, page):
 		if page in self.numQueue:
 			return self.table[page]
 		return None
