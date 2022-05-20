@@ -69,11 +69,9 @@ class MemorySimulator:
 		return (self.pageTable.table[page].frame, None)
 
 	def getFromDisk(self, frame):
-		f = open("BACKING_STORE.bin", 'rb')
-		f.seek(PAGE_SIZE * frame)
-		pg = f.read(PAGE_SIZE)
-		f.close()
-		return pg
+		file = open("BACKING_STORE.bin", 'rb')
+		file.seek(PAGE_SIZE * frame)
+		return file.read(PAGE_SIZE)
 	
 	def printRequest(self, address, value, frameNum, frame):
 		string_frame = [str(num) for num in frame]
