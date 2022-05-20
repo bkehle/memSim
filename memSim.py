@@ -52,7 +52,7 @@ class MemorySimulator:
 			self.TLBHits += 1
 		
 		if frame == None:
-			frame = self.physicalMemory.getFrame[frameNum]
+			frame = self.physicalMemory.memory[frameNum]
 
 		self.printRequest(address, frame[offset], frameNum, frame)
 	
@@ -105,10 +105,6 @@ class LRUMemory:
 			self.memory[temp][i] = frame[i]
 
 		return temp
-	
-	def getFrame(self, frameNum):
-		self.memory[frameNum]
-
 
 class LRUTLB:
 	def __init__(self):
@@ -153,9 +149,6 @@ class FIFOMemory:
 
 		self.frameNum = temp + 1
 		return temp
-	
-	def getFrame(self, frameNum):
-		self.memory[frameNum]
 
 class FIFOTLB:
 	def __init__(self):
